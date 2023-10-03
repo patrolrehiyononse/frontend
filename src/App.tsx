@@ -11,20 +11,6 @@ import Login from './pages/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GPSMap from './pages/map-v2';
 
-
-function LoginPage() {
-  return <div>Login Page</div>;
-}
-
-function AdminPage() {
-  return <div>Admin Page</div>;
-}
-
-function UserPage() {
-  return <div>User Page</div>;
-}
-
-
 function App() {
 
   const isAuthenticated = true;
