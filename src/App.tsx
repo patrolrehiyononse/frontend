@@ -10,6 +10,7 @@ import PersonDashboard from './pages/components/person'
 import Login from './pages/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GPSMap from './pages/map-v2';
+import GPSDisplay from './testing';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" render={() => <Login />} />
           <Route path="/admin" render={() => isAuthenticated ? <Base /> : <Redirect to="/login" />} />
           <Route path="/user" render={() => isAuthenticated ? <GPSMap /> : <Redirect to="/login" />} />
+          {/* <Route path="/user" render={() => isAuthenticated ? <GPSDisplay /> : <Redirect to="/login" />} /> */}
           <Redirect from="/" to="/login" />
         </Switch>
       </Router>

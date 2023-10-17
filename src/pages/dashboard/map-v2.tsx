@@ -3,7 +3,7 @@ import axios from 'axios';
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { MarkerF, InfoWindowF } from '@react-google-maps/api'
 
-const API_KEY = 'AIzaSyDg1RaeqcvZ61vW-JZLLzW3rRxgCDuFpRg';
+const API_KEY: string = process.env.REACT_APP_GOOGLE_API_KEY!;
 const REFRESH_INTERVAL = 60000; // 1 minute
 
 const containerStyle = {

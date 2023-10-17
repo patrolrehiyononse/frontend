@@ -25,7 +25,6 @@ const UnitTable: React.FC<UnitTableProps> = ({ rows, count, pagination }) => {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Id</TableCell>
             <TableCell>Unit Code</TableCell>
             <TableCell>Description</TableCell>
           </TableRow>
@@ -33,7 +32,6 @@ const UnitTable: React.FC<UnitTableProps> = ({ rows, count, pagination }) => {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
               <TableCell>{row.unit_code}</TableCell>
               <TableCell>{row.description}</TableCell>
             </TableRow>

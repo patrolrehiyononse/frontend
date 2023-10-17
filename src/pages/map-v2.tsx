@@ -3,9 +3,10 @@ import axios from 'axios';
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { MarkerF, InfoWindowF } from '@react-google-maps/api'
 import { Button } from '@mui/material';
+import app from '../http_settings';
 
-const API_KEY = 'AIzaSyDg1RaeqcvZ61vW-JZLLzW3rRxgCDuFpRg';
-const REFRESH_INTERVAL = 2000; // 1 minutes
+const API_KEY: string = process.env.REACT_APP_GOOGLE_API_KEY!;
+const REFRESH_INTERVAL = 3000;
 
 const containerStyle = {
     width: '100%',
@@ -20,6 +21,7 @@ const center = {
 const GPSMap: React.FC = () => {
     const [location, setLocation] = useState({ lat: 0, lng: 0 });
     const [clickMarker, setClickMarker] = useState(false);
+    let socket: WebSocket;
 
     const updateLocation = async () => {
         try {
@@ -31,33 +33,39 @@ const GPSMap: React.FC = () => {
     };
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
+        const socketUrl = 'ws://127.0.0.1:8000/ws/some_path/';
+
+        socket = new WebSocket(socketUrl);
+
+        socket.onopen = () => {
+            console.log('WebSocket connected');
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log(data)
+            //   setGPSData(data);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket disconnected');
+        };
+
+        const fetchGPSData = () => {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    setLocation({
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    })
-                    
-                    // setLocation({
-                    //     lat: position.coords.latitude,
-                    //     lng: position.coords.longitude,
-                    // });
+                    const { latitude, longitude } = position.coords;
                     const email = localStorage.getItem("email")
-                    const access_token = localStorage.getItem("access_token")
-                    axios.post(`/api/update_location/?email=${email}`,{lat: position.coords.latitude, lng: position.coords.longitude},
-                    {
-                        headers: {
-                            Authorization: `Bearer ${access_token}`
-                        }
-                    })
-                    console.log({lat: position.coords.latitude, lng: position.coords.longitude})
+                    const data = { latitude, longitude, email };
+                    console.log(data)
+                    socket.send(JSON.stringify(data)); // Send GPS data to the server
                 },
-                (error) => {
-                    console.error('Error fetching location:', error);
-                }
+                (error) => console.error('Error getting GPS data:', error),
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
-        }, REFRESH_INTERVAL);
+        };
+
+        const gpsDataInterval = setInterval(fetchGPSData, 1000); // Fetch every 1 second
 
 
         navigator.geolocation.getCurrentPosition(
@@ -67,7 +75,7 @@ const GPSMap: React.FC = () => {
                     lng: position.coords.longitude,
                 });
                 //   updateLocation();
-                
+
             },
             (error) => {
                 console.error('Error fetching location:', error);
@@ -75,7 +83,8 @@ const GPSMap: React.FC = () => {
         );
 
         return () => {
-            clearInterval(intervalId);
+            clearInterval(gpsDataInterval);
+            socket.close();
         };
     }, []);
 
@@ -89,18 +98,18 @@ const GPSMap: React.FC = () => {
                 >
                     <MarkerF position={location}
                         icon={"http://maps.google.com/mapfiles/ms/icons/purple-dot.png"}
-                        onClick={() => setClickMarker(true)}
+                    // onClick={() => setClickMarker(true)}
                     >
-                        {clickMarker && (
+                        {/* {clickMarker && (
                             <InfoWindowF onCloseClick={() => setClickMarker(false)} position={location}>
                                 <div>
                                     <p>Your current location</p>
                                     {location.lat}
-                                    <br/>
+                                    <br />
                                     {location.lng}
                                 </div>
                             </InfoWindowF>
-                        )}
+                        )} */}
                     </MarkerF>
                 </GoogleMap>
                 <Button href='/' onClick={() => localStorage.clear()}>

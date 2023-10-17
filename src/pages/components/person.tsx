@@ -9,16 +9,23 @@ import RankModal from './person_components/RankModal';
 import PersonTable from './person_components/PersonTable';
 import UnitTable from './person_components/UnitTable';
 import RankTable from './person_components/RankTable';
+import SubUnitTable from './person_components/SubUnitTable';
+import StationTable from './person_components/StationTable';
+import SubUnitModal from './person_components/SubUnitModal';
+import StationModal from './person_components/StationModal';
 
 // Add this import statement for the Unit and Rank types
 import { Person, Unit, Rank } from './person_components/types'; // Update the path if needed
 import axios from 'axios';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
+import app from '../../http_settings';
 
 export default function PersonDashboard() {
   const [addPersonModalOpen, setAddPersonModalOpen] = useState(false);
   const [unitModalOpen, setUnitModalOpen] = useState(false);
   const [rankModalOpen, setRankModalOpen] = useState(false);
+  const [subUnitModal, setSubUnitModal] = useState(false);
+  const [stationModal, setStationModal] = useState(false);
   const [personData, setPersonData] = useState<any>([]);
   const [personCount, setPersonCount] = useState<any>();
   const [unitCount, setUnitCount] = useState<any>();
@@ -27,12 +34,17 @@ export default function PersonDashboard() {
   const [rank, setRank] = useState<any>([]);
   const [value, setValue] = React.useState('1');
   const [subUnitData, setSubUnitData] = useState<any>();
+  const [subUnitCount, setSubUnitCount] = useState<any>();
   const [stationData, setStationData] = useState<any>();
-  const [subStationData, setSubStationData] = useState<any>();
+  const [stationCount, setStationCount] = useState<any>();
   const [token, setToken] = useState<any>();
 
+  const [unitList, setUnitList] = React.useState<any>([]);
+  const [rankList, setRankList] = React.useState<any>([]);
+  const [subUnitList, setSubUnitList] = React.useState<any>([]);
+
   const fetchPersonData = (page: any) => {
-    axios.get(`/api/person/?page=${page}`, {
+    app.get(`/api/person/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -42,7 +54,7 @@ export default function PersonDashboard() {
   }
 
   const fetchUnitData = (page: any) => {
-    axios.get(`/api/unit/?page=${page}`, {
+    app.get(`/api/unit/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -52,12 +64,52 @@ export default function PersonDashboard() {
   }
 
   const fetchRankData = (page: any) => {
-    axios.get(`/api/rank/?page=${page}`, {
+    app.get(`/api/rank/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     }).then((res: any) => {
       setRank(res.data.results)
+    })
+  }
+
+  const fetchSubUnit = (page: any) => {
+    app.get(`/api/sub_unit/?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((res: any) => {
+      setSubUnitData(res.data.results)
+    })
+  }
+
+  const fetchStation = (page: any) => {
+    app.get(`/api/station/?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((res: any) => {
+      setStationData(res.data.results)
+    })
+  }
+
+  const updateUnitDropdown = () => {
+    app.get("/api/unit_choices/", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((res: any) => {
+      setUnitList(res.data)
+    })
+  }
+
+  const updateRankDropdown = () => {
+    app.get("/api/rank_choices/", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((res: any) => {
+      setRankList(res.data)
     })
   }
 
@@ -74,7 +126,7 @@ export default function PersonDashboard() {
   };
 
   const handleAddPerson = (person: any) => {
-    axios.post('/api/person/', {
+    app.post('/api/person/', {
       acccountNumber: person.accountNumber,
       full_name: person.full_name,
       rank: person.rank,
@@ -90,7 +142,7 @@ export default function PersonDashboard() {
   };
 
   const handleAddUnit = (data: any) => {
-    axios.post('/api/unit/', {
+    app.post('/api/unit/', {
       unit_code: data.unit_code,
       description: data.description,
     }, {
@@ -98,12 +150,43 @@ export default function PersonDashboard() {
         Authorization: `Bearer ${token}`
       }
     }).then((res: any) => {
-      fetchUnitData(1)
+      fetchUnitData(1);
+      updateUnitDropdown();
     })
   };
 
+  const handelAddSubUnit = (data: any) => {
+    app.post('/api/sub_unit/', {
+      unit: data.units,
+      sub_unit_code: data.sub_unit_code,
+      sub_unit_description: data.sub_unit_description,
+      abbreviation: data.abbreviation
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((res: any) => {
+      fetchSubUnit(1);
+    })
+  }
+
+  const handelAddStation = (data: any) => {
+    app.post('/api/station/', {
+      sub_unit: data.sub_unit,
+      station_code: data.station_code,
+      station_name: data.station_name,
+      description: data.description
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }).then((res: any) => {
+      fetchStation(1);
+    })
+  }
+
   const handleAddRank = (data: any) => {
-    axios.post('/api/rank/', {
+    app.post('/api/rank/', {
       rank_code: data.rank_code,
       description: data.description,
     }, {
@@ -112,6 +195,7 @@ export default function PersonDashboard() {
       }
     }).then((res: any) => {
       fetchRankData(1)
+      updateRankDropdown();
     })
   };
 
@@ -119,7 +203,7 @@ export default function PersonDashboard() {
     const access_token = localStorage.getItem("access_token");
     setToken(access_token)
     const getData = async () => {
-      axios.get(`/api/person/`, {
+      app.get(`/api/person/`, {
         headers: {
           Authorization: `Bearer ${access_token}`
         }
@@ -129,7 +213,7 @@ export default function PersonDashboard() {
       })
     }
     const getUnit = async () => {
-      axios.get(`/api/unit/`, {
+      app.get(`/api/unit/`, {
         headers: {
           Authorization: `Bearer ${access_token}`
         }
@@ -139,7 +223,7 @@ export default function PersonDashboard() {
       })
     }
     const getRank = async () => {
-      axios.get(`/api/rank/`, {
+      app.get(`/api/rank/`, {
         headers: {
           Authorization: `Bearer ${access_token}`
         }
@@ -148,10 +232,65 @@ export default function PersonDashboard() {
         setRankCount(Math.ceil(res.data.count / res.data.results.length))
       })
     }
+    const getSubUnit = async () => {
+      app.get(`/api/sub_unit/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      }).then((res: any) => {
+        setSubUnitData(res.data.results)
+        setSubUnitCount(Math.ceil(res.data.count / res.data.results.length))
+      })
+    }
+    const getStation = async () => {
+      app.get(`/api/station/`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`
+        }
+      }).then((res: any) => {
+        setStationData(res.data.results)
+        setStationCount(Math.ceil(res.data.count / res.data.results.length))
+      })
+    }
 
     getData();
     getUnit();
     getRank();
+    getSubUnit();
+    getStation();
+  }, [])
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    app.get("/api/unit_choices/", {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }).then((res: any) => {
+      setUnitList(res.data)
+    })
+  }, [])
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    app.get("/api/rank_choices/", {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }).then((res: any) => {
+      setRankList(res.data)
+    })
+  }, [])
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    app.get("/api/subunit_choices/", {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }).then((res: any) => {
+      setSubUnitList(res.data)
+    })
   }, [])
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -167,9 +306,8 @@ export default function PersonDashboard() {
               <Tab label="Person" value="1" />
               <Tab label="Rank" value="2" />
               <Tab label="Unit" value="3" />
-              {/* <Tab label="Sub Unit" value="4" />
+              <Tab label="Sub Unit" value="4" />
               <Tab label="Station" value="5" />
-              <Tab label="Sub Station" value="6" /> */}
             </TabList>
           </Box>
           <TabPanel value="1">
@@ -222,13 +360,50 @@ export default function PersonDashboard() {
             </React.Fragment>
             <UnitModal open={unitModalOpen} onClose={handleCloseUnitModal} onAddUnit={handleAddUnit} />
           </TabPanel>
+          <TabPanel value="4">
+            <React.Fragment>
+              <Box display="flex" justifyContent="flex-end" marginBottom={2}>
+                <Button variant="contained" onClick={() => setSubUnitModal(true)}>
+                  Add Sub Unit
+                </Button>
+              </Box>
+              <Title>Sub Unit</Title>
+              <SubUnitTable
+                rows={subUnitData} count={subUnitCount}
+              pagination={
+                (page: any) => {
+                  fetchSubUnit(page)
+                }}
+              />
+            </React.Fragment>
+            <SubUnitModal open={subUnitModal} units={unitList} onClose={() => setSubUnitModal(false)} onAddSubUnit={handelAddSubUnit} />
+          </TabPanel>
+          <TabPanel value="5">
+            <React.Fragment>
+              <Box display="flex" justifyContent="flex-end" marginBottom={2}>
+                <Button variant="contained" onClick={() => setStationModal(true)}>
+                  Add Station
+                </Button>
+              </Box>
+              <Title>Station</Title>
+              <StationTable
+                rows={stationData} count={stationCount}
+              pagination={
+                (page: any) => {
+                  fetchStation(page)
+                }}
+              />
+            </React.Fragment>
+            <StationModal open={stationModal} subUnits={subUnitList} onClose={() => setStationModal(false)} onAddStation={handelAddStation}/>
+          </TabPanel>
         </TabContext>
       </Box>
       <PersonModal
         open={addPersonModalOpen}
         onClose={handleCloseAddPersonModal}
         onAddPerson={handleAddPerson}
-        token={token}
+        units={unitList}
+        ranks={rankList}
       />
     </Grid>
   );

@@ -15,6 +15,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import GPSMap from './dashboard/map-v2';
+import app from '../http_settings';
 
 const Dashboard = () => {
   const [value, setValue] = React.useState('1');
@@ -31,7 +32,7 @@ const Dashboard = () => {
 
   const fetchData = async (search: any) => {
     try {
-      const response = await axios.get(`/api/dashboard/?station=${search}`, {
+      const response = await app.get(`/api/dashboard/?station=${search}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -43,11 +44,12 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    console.log("asdasd")
     const access_token = localStorage.getItem("access_token");
     setToken(access_token);
     const getData = async () => {
       try {
-        const response = await axios.get('/api/dashboard/', {
+        const response = await app.get('/api/dashboard/', {
           headers: {
             Authorization: `Bearer ${access_token}`
           }

@@ -16,6 +16,7 @@ import axios from 'axios';
 
 import img from '../assets/viber_image_2023-09-11_18-36-47-771.jpg';
 import logo from '../assets/viber_image_2023-09-11_18-36-46-801.png';
+import app from '../http_settings';
 
 
 type FormValues = {
@@ -39,7 +40,7 @@ const Login: React.FC = () => {
     
     // Handle login logic here
 
-      axios.post('/api/login/', {email: data.email, password: data.password}).then((res) => {
+      app.post('/api/login/', {email: data.email, password: data.password}).then((res) => {
         console.log(res.data)
         localStorage.setItem("access_token", res.data.access_token)
         if (res.data.role === "user") {

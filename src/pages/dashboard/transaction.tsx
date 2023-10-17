@@ -13,6 +13,7 @@ import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField } from
 import SearchIcon from '@mui/icons-material/Search';
 import LocateModal from '../components/transaction_components/locateModal';
 import ExploreIcon from '@mui/icons-material/Explore';
+import app from '../../http_settings';
 
 export default function TransactionTable() {
   const [data, setData] = useState<any>([]);
@@ -40,7 +41,7 @@ export default function TransactionTable() {
     const access_token = localStorage.getItem("access_token");
     setToken(access_token)
     const getData = async () => {
-      axios.get(`/api/transaction/`, {
+      app.get(`/api/transaction/`, {
         headers: {
           Authorization: `Bearer ${access_token}`
         }

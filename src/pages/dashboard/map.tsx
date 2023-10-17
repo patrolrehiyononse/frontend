@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { MarkerF, InfoWindowF } from '@react-google-maps/api'
+import app from '../../http_settings';
 
-const API_KEY = 'AIzaSyDg1RaeqcvZ61vW-JZLLzW3rRxgCDuFpRg';
+const API_KEY: string = process.env.REACT_APP_GOOGLE_API_KEY!;
 const REFRESH_INTERVAL = 2000; // 1 minute
 
 const containerStyle = {
@@ -26,51 +27,11 @@ const Map = (props: any) => {
     const [data, setData] = useState<any>([]);
     const [token, setToken] = useState<any>('');
 
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => {
-    //         navigator.geolocation.getCurrentPosition(
-    //             (position) => {
-    //                 setLocation({
-    //                     lat: position.coords.latitude,
-    //                     lng: position.coords.longitude
-    //                 })
-    //                 console.log("Lat", position.coords.latitude)
-    //                 console.log("Lng", position.coords.longitude)
-    //                 // setLocation({
-    //                 //     lat: position.coords.latitude,
-    //                 //     lng: position.coords.longitude,
-    //                 // });
-    //             },
-    //             (error) => {
-    //                 console.error('Error fetching location:', error);
-    //             }
-    //         );
-    //     }, REFRESH_INTERVAL);
-
-    //     navigator.geolocation.getCurrentPosition(
-    //         (position) => {
-    //             setLocation({
-    //                 lat: position.coords.latitude,
-    //                 lng: position.coords.longitude,
-    //             });
-    //             //   updateLocation();
-    //             console.log(position)
-    //         },
-    //         (error) => {
-    //             console.error('Error fetching location:', error);
-    //         }
-    //     );
-
-    //     return () => {
-    //         clearInterval(intervalId);
-    //     };
-    // }, []);
-
     useEffect(() => {
         const access_token = localStorage.getItem("access_token");
         const getData = async () => {
             try {
-                const response = await axios.get('/api/dashboard/', {
+                const response = await app.get('/api/dashboard/', {
                     headers: {
                         Authorization: `Bearer ${access_token}`
                     }

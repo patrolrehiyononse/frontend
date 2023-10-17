@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { Modal, Box, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import axios from 'axios';
+import app from '../../../http_settings';
 
 type PersonModalProps = {
   open: boolean;
   onClose: () => void;
   onAddPerson: (person: Person) => void;
-  token: any;
+  units: any;
+  ranks: any;
 };
 
 type Person = {
@@ -17,37 +19,43 @@ type Person = {
   email: any;
 };
 
-const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, token }) => {
-  const [units, setUnits] = React.useState<any>([]);
-  const [ranks, setRanks] = React.useState<any>([]);
+const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, units, ranks }) => {
+  // const [units, setUnits] = React.useState<any>([]);
+  // const [ranks, setRanks] = React.useState<any>([]);
+  const [stations, setStations] = React.useState<any>([]);
+  const [subUnits, setSubUnits] = React.useState<any>([]);
   const [rank, setRank] = React.useState<string>();
   const [unit, setUnit] = React.useState<string>();
+  const [station, setStation] = React.useState<any>([]);
+  const [subUnit, setSubUnit] = React.useState<any>([]);
   const [fullName, setFullName] = React.useState<string>();
   const [accountNumber, setAccountNumber] = React.useState<string>();
   const [email, setEmail] = React.useState<string>();
   const [role, setRole] = React.useState<string>();
 
-  useEffect(() => {
-    const access_token = localStorage.getItem("access_token");
-    axios.get("/api/unit/", {
-      headers: {
-        Authorization: `Bearer ${access_token}`
-      }
-    }).then((res: any) => {
-      setUnits(res.data.results)
-    })
-  }, [])
+  
 
-  useEffect(() => {
-    const access_token = localStorage.getItem("access_token");
-    axios.get("/api/rank/", {
-      headers: {
-        Authorization: `Bearer ${access_token}`
-      }
-    }).then((res: any) => {
-      setRanks(res.data.results)
-    })
-  }, [])
+  // useEffect(() => {
+  //   const access_token = localStorage.getItem("access_token");
+  //   app.get("/api/station_choices/", {
+  //     headers: {
+  //       Authorization: `Bearer ${access_token}`
+  //     }
+  //   }).then((res: any) => {
+  //     setStations(res.data)
+  //   })
+  // }, [])
+
+  // useEffect(() => {
+  //   const access_token = localStorage.getItem("access_token");
+  //   app.get("/api/subunit_choices/", {
+  //     headers: {
+  //       Authorization: `Bearer ${access_token}`
+  //     }
+  //   }).then((res: any) => {
+  //     setSubUnits(res.data)
+  //   })
+  // }, [])
 
   const handleAddPerson = () => {
     onAddPerson({
@@ -82,7 +90,7 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, t
         <TextField
           label="Account Number"
           fullWidth
-          margin="normal"
+          // margin="normal"
           name="accountNumber"
           value={accountNumber}
           onChange={(e) => setAccountNumber(e.target.value)}
@@ -101,30 +109,60 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, t
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={unit}
-            label="Age"
+            label="Unit"
             onChange={(e) => setUnit(e.target.value)}
           >
             {units.map((items: any) => (
-              <MenuItem value={items.unit_code} key={items.id}>{items.unit_code}</MenuItem>
+              <MenuItem value={items.unit_code} key={items.id}>{items.description}</MenuItem>
             )
             )}
           </Select>
         </FormControl>
+        {/* <FormControl fullWidth sx={{ marginBottom: "10px" }}>
+          <InputLabel id="demo-simple-select-label">Sub Unit</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={station}
+            label="Station"
+            onChange={(e) => setStation(e.target.value)}
+          >
+            {subUnits.map((items: any) => (
+              <MenuItem value={items.sub_unit_code} key={items.id}>{items.station_name} {items.description === null ? " " : `- ${items.description}`}</MenuItem>
+            )
+            )}
+          </Select>
+        </FormControl> */}
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Rank</InputLabel>
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={rank}
-            label="Age"
+            label="Rank"
             onChange={(e) => setRank(e.target.value)}
           >
             {ranks.map((items: any) => (
-              <MenuItem value={items.rank_code} key={items.id}>{items.rank_code}</MenuItem>
+              <MenuItem value={items.rank_code} key={items.id}>{items.description}</MenuItem>
             )
             )}
           </Select>
         </FormControl>
+        {/* <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Station</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={station}
+            label="Station"
+            onChange={(e) => setStation(e.target.value)}
+          >
+            {stations.map((items: any) => (
+              <MenuItem value={items.station_code} key={items.id}>{items.station_name} {items.description === null ? " " : `- ${items.description}`}</MenuItem>
+            )
+            )}
+          </Select>
+        </FormControl> */}
         <TextField
           label="Email"
           fullWidth

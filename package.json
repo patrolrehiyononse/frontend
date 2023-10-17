@@ -30,6 +30,7 @@
     "react-bootstrap": "^2.7.4",
     "react-clock": "^4.2.0",
     "react-dom": "^18.2.0",
+    "react-dotenv": "^0.1.3",
     "react-google-maps": "^9.4.5",
     "react-google-maps-api": "^1.0.8",
     "react-helmet": "^6.1.0",
@@ -37,8 +38,10 @@
     "react-router-dom": "5",
     "react-scripts": "^5.0.1",
     "sass": "^1.63.4",
+    "socket.io-client": "^4.7.2",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "websocket": "^1.0.34"
   },
   "scripts": {
     "start": "react-scripts start",

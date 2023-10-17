@@ -13,6 +13,7 @@ import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField } from
 import SearchIcon from '@mui/icons-material/Search';
 import LocateModal from './transaction_components/locateModal';
 import ExploreIcon from '@mui/icons-material/Explore';
+import app from '../../http_settings';
 
 export default function Transaction() {
   const [data, setData] = useState<any>([]);
@@ -27,7 +28,7 @@ export default function Transaction() {
 
 
   const fetchData = async (page: number, object: string, value: string) => {
-    axios.get(`/api/transaction/?object=${object}&value=${value}`, {
+    app.get(`/api/transaction/?object=${object}&value=${value}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -41,7 +42,7 @@ export default function Transaction() {
     const access_token = localStorage.getItem("access_token");
     setToken(access_token)
     const getData = async () => {
-      axios.get("/api/transaction/", {
+      await app.get("/api/transaction/", {
         headers: {
           Authorization: `Bearer ${access_token}`
         }
@@ -84,7 +85,7 @@ export default function Transaction() {
 
   const handleNextPage = (event: React.ChangeEvent<unknown>, value: number) => {
     // setPage(value);
-    axios.get(`/api/transaction/?page=${value}&object=${object}&value=${searchInput}`,
+    app.get(`/api/transaction/?page=${value}&object=${object}&value=${searchInput}`,
       {
         headers: {
           Authorization: `Bearer ${token}`

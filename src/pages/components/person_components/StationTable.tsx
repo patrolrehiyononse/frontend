@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Table, TableHead, TableBody, TableCell, TableRow, Pagination } from '@mui/material';
 
 
-const SubUnitTable = ({ rows, count, pagination }: any) => {
+const StationTable = ({ rows, count, pagination }: any) => {
 
     const handleNextPage = (event: React.ChangeEvent<unknown>, value: number) => {
         pagination(value)
@@ -13,21 +13,17 @@ const SubUnitTable = ({ rows, count, pagination }: any) => {
             <Table size="small">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Unit Code</TableCell>
-                        <TableCell>Unit</TableCell>
-                        <TableCell>Sub Unit Code</TableCell>
+                        <TableCell>Station Code</TableCell>
+                        <TableCell>Station</TableCell>
                         <TableCell>Description</TableCell>
-                        <TableCell>Abbreviation</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rows.map((row: any) => (
                         <TableRow key={row.id}>
-                            <TableCell>{row.unit.unit_code}</TableCell>
-                            <TableCell>{row.unit.description}</TableCell>
-                            <TableCell>{row.sub_unit_code}</TableCell>
-                            <TableCell>{row.sub_unit_description}</TableCell>
-                            <TableCell>{row.abbreviation}</TableCell>
+                            <TableCell>{row.station_code}</TableCell>
+                            <TableCell>{row.station_name}</TableCell>
+                            <TableCell>{row.description}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
@@ -38,4 +34,4 @@ const SubUnitTable = ({ rows, count, pagination }: any) => {
 
 }
 
-export default SubUnitTable;
+export default StationTable;
