@@ -20,6 +20,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import routers from '../routes';
+import LanguageIcon from '@mui/icons-material/Language';
 
 
 
@@ -126,7 +127,7 @@ export default function Dashboard() {
                         >
                             Dashboard
                         </Typography> */}
-                        <IconButton color="inherit" sx={{ marginLeft: "53em" }} onClick={handleClick}>
+                        <IconButton color="inherit" onClick={handleClick}>
                             <Badge badgeContent={4} color="secondary">
                                 <AccountCircleIcon />
                             </Badge>
@@ -180,25 +181,14 @@ export default function Dashboard() {
                                     <ListItemText primary="Person" />
                                 </ListItemButton>
                             </Link>
-
-                            {/* <ListItemButton>
-                                <ListItemIcon>
-                                    <ContactEmergencyIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Rank" />
-                            </ListItemButton>
-                            <ListItemButton>
-                                <ListItemIcon>
-                                    <AdminPanelSettingsIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Unit" />
-                            </ListItemButton> */}
-                            {/* <ListItemButton>
-                                <ListItemIcon>
-                                    <LayersIcon />
-                                </ListItemIcon>
-                                <ListItemText primary="Integrations" />
-                            </ListItemButton> */}
+                            <Link href="/admin/geofence" underline="none">
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <LanguageIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Geofencing" />
+                                </ListItemButton>
+                            </Link>
                         </>
                     </List>
                 </Drawer>

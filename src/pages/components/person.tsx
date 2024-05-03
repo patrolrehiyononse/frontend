@@ -37,78 +37,49 @@ export default function PersonDashboard() {
   const [subUnitCount, setSubUnitCount] = useState<any>();
   const [stationData, setStationData] = useState<any>();
   const [stationCount, setStationCount] = useState<any>();
-  const [token, setToken] = useState<any>();
 
   const [unitList, setUnitList] = React.useState<any>([]);
   const [rankList, setRankList] = React.useState<any>([]);
   const [subUnitList, setSubUnitList] = React.useState<any>([]);
 
   const fetchPersonData = (page: any) => {
-    app.get(`/api/person/?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get(`/api/person/?page=${page}`).then((res: any) => {
       setPersonData(res.data.results)
     })
   }
 
   const fetchUnitData = (page: any) => {
-    app.get(`/api/unit/?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get(`/api/unit/?page=${page}`).then((res: any) => {
       setUnit(res.data.results)
     })
   }
 
   const fetchRankData = (page: any) => {
-    app.get(`/api/rank/?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get(`/api/rank/?page=${page}`).then((res: any) => {
       setRank(res.data.results)
     })
   }
 
   const fetchSubUnit = (page: any) => {
-    app.get(`/api/sub_unit/?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get(`/api/sub_unit/?page=${page}`).then((res: any) => {
       setSubUnitData(res.data.results)
     })
   }
 
   const fetchStation = (page: any) => {
-    app.get(`/api/station/?page=${page}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get(`/api/station/?page=${page}`).then((res: any) => {
       setStationData(res.data.results)
     })
   }
 
   const updateUnitDropdown = () => {
-    app.get("/api/unit_choices/", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get("/api/unit_choices/").then((res: any) => {
       setUnitList(res.data)
     })
   }
 
   const updateRankDropdown = () => {
-    app.get("/api/rank_choices/", {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }).then((res: any) => {
+    app.get("/api/rank_choices/").then((res: any) => {
       setRankList(res.data)
     })
   }
@@ -127,15 +98,11 @@ export default function PersonDashboard() {
 
   const handleAddPerson = (person: any) => {
     app.post('/api/person/', {
-      acccountNumber: person.accountNumber,
+      acccount_number: person.accountNumber,
       full_name: person.full_name,
       rank: person.rank,
       unit: person.unit,
       email: person.email
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     }).then((res: any) => {
       fetchPersonData(1)
     })
@@ -145,10 +112,6 @@ export default function PersonDashboard() {
     app.post('/api/unit/', {
       unit_code: data.unit_code,
       description: data.description,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     }).then((res: any) => {
       fetchUnitData(1);
       updateUnitDropdown();
@@ -161,10 +124,6 @@ export default function PersonDashboard() {
       sub_unit_code: data.sub_unit_code,
       sub_unit_description: data.sub_unit_description,
       abbreviation: data.abbreviation
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     }).then((res: any) => {
       fetchSubUnit(1);
     })
@@ -176,10 +135,6 @@ export default function PersonDashboard() {
       station_code: data.station_code,
       station_name: data.station_name,
       description: data.description
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     }).then((res: any) => {
       fetchStation(1);
     })
@@ -189,10 +144,6 @@ export default function PersonDashboard() {
     app.post('/api/rank/', {
       rank_code: data.rank_code,
       description: data.description,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
     }).then((res: any) => {
       fetchRankData(1)
       updateRankDropdown();
@@ -200,54 +151,32 @@ export default function PersonDashboard() {
   };
 
   useEffect(() => {
-    const access_token = localStorage.getItem("access_token");
-    setToken(access_token)
     const getData = async () => {
-      app.get(`/api/person/`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }).then((res: any) => {
+      app.get(`/api/person/`).then((res: any) => {
         setPersonData(res.data.results)
         setPersonCount(Math.ceil(res.data.count / res.data.results.length))
       })
     }
     const getUnit = async () => {
-      app.get(`/api/unit/`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }).then((res: any) => {
+      app.get(`/api/unit/`).then((res: any) => {
         setUnit(res.data.results)
         setUnitCount(Math.ceil(res.data.count / res.data.results.length))
       })
     }
     const getRank = async () => {
-      app.get(`/api/rank/`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }).then((res: any) => {
+      app.get(`/api/rank/`).then((res: any) => {
         setRank(res.data.results)
         setRankCount(Math.ceil(res.data.count / res.data.results.length))
       })
     }
     const getSubUnit = async () => {
-      app.get(`/api/sub_unit/`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }).then((res: any) => {
+      app.get(`/api/sub_unit/`).then((res: any) => {
         setSubUnitData(res.data.results)
         setSubUnitCount(Math.ceil(res.data.count / res.data.results.length))
       })
     }
     const getStation = async () => {
-      app.get(`/api/station/`, {
-        headers: {
-          Authorization: `Bearer ${access_token}`
-        }
-      }).then((res: any) => {
+      app.get(`/api/station/`).then((res: any) => {
         setStationData(res.data.results)
         setStationCount(Math.ceil(res.data.count / res.data.results.length))
       })

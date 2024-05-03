@@ -12,7 +12,8 @@ import Button from '@mui/material/Button';
 import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocateModal from './transaction_components/locateModal';
-import ExploreIcon from '@mui/icons-material/Explore';
+// import ExploreIcon from '@mui/icons-material/Explore';
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import app from '../../http_settings';
 
 export default function Transaction() {
@@ -154,9 +155,9 @@ export default function Transaction() {
                 <TableCell align='right'>
                   <Button variant="text" onClick={(e) => {
                     setOpenLocate(true)
-                    setLatLng([row.lng, row.lat])
+                    setLatLng({lat: parseFloat(row.lat), lng: parseFloat(row.lng)})
                   }}>
-                    <ExploreIcon />
+                    <ControlPointIcon />
                   </Button>
                 </TableCell>
               </TableRow>

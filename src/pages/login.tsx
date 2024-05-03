@@ -12,11 +12,10 @@ import { useForm } from 'react-hook-form';
 
 import { Switch, useLocation, useHistory } from 'react-router-dom';
 
-import axios from 'axios';
-
 import img from '../assets/viber_image_2023-09-11_18-36-47-771.jpg';
 import logo from '../assets/viber_image_2023-09-11_18-36-46-801.png';
 import app from '../http_settings';
+import CodeInputDialog from './components/login_components/email_verification';
 
 
 type FormValues = {
@@ -28,31 +27,30 @@ const Login: React.FC = () => {
   // const [email, setEmail] = useState('');
   // const [password, setPassword] = useState('');
   const history = useHistory();
+  const [showCodeDialog, setShowCodeDialog] = useState<boolean>(false);
+  const [text, setText] = useState();
 
 
   const form = useForm<FormValues>();
 
   const { register, handleSubmit, formState } = form;
-  
+
   const { errors } = formState;
 
-  const onSubmit = (data: FormValues) => {
-    
+  const onSubmit =  (data: FormValues) => {
     // Handle login logic here
-
-      app.post('/api/login/', {email: data.email, password: data.password}).then((res) => {
-        console.log(res.data)
-        localStorage.setItem("access_token", res.data.access_token)
-        if (res.data.role === "user") {
-          history.push('/user')
-        }else if (res.data.role === "admin") {
-          history.push('/admin/dashboard')
-        }
-        
-      })
-      localStorage.setItem("email", data.email);
-    // }
-    // history.push(email === "admin" ? '/admin/dashboard' : '/user')
+     app.post('/api/login/', { email: data.email, password: data.password }).then((res) => {
+      // console.log("access")
+      localStorage.setItem("access_token", res.data.access_token)
+      localStorage.setItem("refresh_token", res.data.refresh_token)
+      if (res.data.role === "user") {
+        history.push('/user')
+      } else if (res.data.role === "admin") {
+        history.push('/admin/dashboard')
+        // setShowCodeDialog(true)
+      }
+    })
+    localStorage.setItem("email", data.email);
   };
 
   return (
@@ -77,11 +75,11 @@ const Login: React.FC = () => {
             alignItems: 'center',
           }}
         >
-          <img src={logo} style={{ width: "100px" }}/>
+          <img src={logo} style={{ width: "100px" }} />
 
           <strong style={{ fontSize: "20px" }}>Patrol Rehiyon Onse GPS Web Application</strong>
-          <br/>
-          <br/>
+          <br />
+          <br />
           <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
@@ -119,11 +117,22 @@ const Login: React.FC = () => {
                 >
                   Login
                 </Button>
+
+                {
+                  text ? text : null
+                }
               </Grid>
             </Grid>
           </form>
         </Paper>
       </Container>
+      {
+        showCodeDialog &&
+        <CodeInputDialog
+          open={showCodeDialog}
+          onClose={() => setShowCodeDialog(false)}
+        />
+      }
     </div>
   );
 };

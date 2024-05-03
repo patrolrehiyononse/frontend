@@ -27,7 +27,7 @@ export default function TransactionTable() {
   const [token, setToken] = useState<any>('');
 
   const fetchData = async (page: number) => {
-    axios.get(`/api/transaction/?page=${page}`, {
+    app.get(`/api/transaction/?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

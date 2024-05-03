@@ -32,46 +32,6 @@ const GPSMap = (props: any) => {
         }
     };
 
-    // useEffect(() => {
-    //     const intervalId = setInterval(() => {
-    //         navigator.geolocation.getCurrentPosition(
-    //             (position) => {
-    //                 setLocation({
-    //                     lat: position.coords.latitude,
-    //                     lng: position.coords.longitude
-    //                 })
-    //                 console.log("Lat", position.coords.latitude)
-    //                 console.log("Lng", position.coords.longitude)
-    //                 // setLocation({
-    //                 //     lat: position.coords.latitude,
-    //                 //     lng: position.coords.longitude,
-    //                 // });
-    //             },
-    //             (error) => {
-    //                 console.error('Error fetching location:', error);
-    //             }
-    //         );
-    //     }, REFRESH_INTERVAL);
-
-    //     navigator.geolocation.getCurrentPosition(
-    //         (position) => {
-    //             setLocation({
-    //                 lat: position.coords.latitude,
-    //                 lng: position.coords.longitude,
-    //             });
-    //             //   updateLocation();
-    //             console.log(position)
-    //         },
-    //         (error) => {
-    //             console.error('Error fetching location:', error);
-    //         }
-    //     );
-
-    //     return () => {
-    //         clearInterval(intervalId);
-    //     };
-    // }, []);
-
     useEffect(() => {
         setCenter({
             lat: 7.131229,
@@ -94,7 +54,7 @@ const GPSMap = (props: any) => {
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}
-                    zoom={11}
+                    zoom={9}
                 >
                     {props.data.map((items: any, index: any) => {
                         return (

@@ -2,7 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Dashboard from "./pages/dashboard";
 import PersonDashboard from "./pages/components/person";
-import FindUser from "./pages/find_user";
+import Login from "./pages/login";
+import GeoFencing from "./pages/geofencing/main";
 
 const routers = () => {
 
@@ -11,6 +12,8 @@ const routers = () => {
             <Switch>
                 <Route path="/admin/dashboard" render={() => <Dashboard />} />
                 <Route path='/admin/person' render={() => <PersonDashboard />} />
+                <Route path='/admin/geofence' render={() => <GeoFencing />} />
+                <Route path='/login' render={() => <Login />} />
             </Switch>
         </Router>
         // <BrowserRouter>

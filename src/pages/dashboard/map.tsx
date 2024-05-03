@@ -5,7 +5,7 @@ import { MarkerF, InfoWindowF } from '@react-google-maps/api'
 import app from '../../http_settings';
 
 const API_KEY: string = process.env.REACT_APP_GOOGLE_API_KEY!;
-const REFRESH_INTERVAL = 2000; // 1 minute
+const REFRESH_INTERVAL = 500; // 1 minute
 
 const containerStyle = {
     width: '100%',
@@ -31,11 +31,7 @@ const Map = (props: any) => {
         const access_token = localStorage.getItem("access_token");
         const getData = async () => {
             try {
-                const response = await app.get('/api/dashboard/', {
-                    headers: {
-                        Authorization: `Bearer ${access_token}`
-                    }
-                });
+                const response = await app.get('/api/dashboard/');
                 setData(response.data)
             } catch (error) {
                 console.error('Error fetching locations:', error);
@@ -67,15 +63,13 @@ const Map = (props: any) => {
         setClickMarker({ ...clickMarker, [index]: false });
     };
 
-    console.log(data)
-
     return (
         <LoadScript googleMapsApiKey={API_KEY}>
             <div style={{ height: '100%', width: '100%' }}>
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={center}
-                    zoom={15}
+                    zoom={9}
                 >
                     {data.map((items: any, index: any) => {
                         return (

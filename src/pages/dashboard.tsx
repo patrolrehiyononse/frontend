@@ -6,7 +6,6 @@ import MapComponent from './dashboard/map';
 import MapTab from './dashboard/map'
 import TransactionTable from './dashboard/transaction'
 import Transaction from './components/Transaction';
-import ClockDashboard from './components/digital_clock';
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
@@ -16,6 +15,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import GPSMap from './dashboard/map-v2';
 import app from '../http_settings';
+import GeoFencing from './geofencing/geofencing';
 
 const Dashboard = () => {
   const [value, setValue] = React.useState('1');
@@ -32,11 +32,7 @@ const Dashboard = () => {
 
   const fetchData = async (search: any) => {
     try {
-      const response = await app.get(`/api/dashboard/?station=${search}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await app.get(`/api/dashboard/?station=${search}`);
       setData(response.data)
     } catch (error) {
       console.error('Error fetching locations:', error);
@@ -44,16 +40,11 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    console.log("asdasd")
     const access_token = localStorage.getItem("access_token");
     setToken(access_token);
     const getData = async () => {
       try {
-        const response = await app.get('/api/dashboard/', {
-          headers: {
-            Authorization: `Bearer ${access_token}`
-          }
-        });
+        const response = await app.get('/api/dashboard/');
         setData(response.data)
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -125,7 +116,7 @@ const Dashboard = () => {
                 }}
               >
                 <MapTab data={data} />
-                
+
               </Paper>
             </TabPanel>
           </TabContext>
