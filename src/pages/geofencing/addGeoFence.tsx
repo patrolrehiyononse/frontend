@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react'
-import { Box, Button, DialogContent, DialogContentText, Modal, Paper, Tab, TextField } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react'
+import { Box, Button, DialogContent, DialogContentText, FormControl, InputLabel, MenuItem, Modal, Paper, Select, Tab, TextField } from '@mui/material';
 // import { LocatePerson } from './locatePerson';
 import Dialog from '@mui/material/Dialog';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -31,6 +31,8 @@ function AddGeoFence(props: any) {
     const [name, setName] = useState<string>("");
     const [coordinates, setCoordinates] = useState<string>("");
     const [polyCenter, setPolyCenter] = useState<any>();
+    const [unitList, setUnitList] = useState<any>([]);
+    const [unit, setUnit] = useState<any>();
 
     const options: any = {
         drawingControl: true,
@@ -48,8 +50,6 @@ function AddGeoFence(props: any) {
             zindex: 1,
         }
     }
-
-
 
     const onPolygonComplete = useCallback(
         (poly: google.maps.Polygon) => {
@@ -82,8 +82,9 @@ function AddGeoFence(props: any) {
     );
 
     const handelSave = () => {
+        // console.log(unit)
         app.post('/api/geofencing/', {
-            name: name,
+            name: unit,
             coordinates: coordinates,
             center: polyCenter
         }).then((res: any) => {
@@ -91,6 +92,12 @@ function AddGeoFence(props: any) {
             props.onClose()
         })
     }
+
+    useEffect(() => {
+        app.get("/api/unit_choices/").then((res: any) => {
+            setUnitList(res.data)
+          })
+    }, [])
 
 
     return (
@@ -100,13 +107,28 @@ function AddGeoFence(props: any) {
                     To subscribe to this website, please enter your email address here. We
                     will send updates occasionally.
                 </DialogContentText> */}
-                <TextField
+                {/* <TextField
                     id="standard-basic"
                     label="Name"
                     variant="standard"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                />
+                /> */}
+                <FormControl sx={{ marginBottom: "10px", width: "20em" }}>
+                    <InputLabel id="demo-simple-select-label">Unit</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={unit}
+                        label="Unit"
+                        onChange={(e) => setUnit(e.target.value)}
+                    >
+                        {unitList.map((items: any) => (
+                            <MenuItem value={items.description} key={items.id}>{items.description}</MenuItem>
+                        )
+                        )}
+                    </Select>
+                </FormControl>
                 <Button variant="text" sx={{ marginTop: "13px", marginLeft: "10px" }} onClick={handelSave}>add</Button>
                 <Paper
                     sx={{

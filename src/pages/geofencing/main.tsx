@@ -49,6 +49,8 @@ function GeoFencing() {
     })
   }
 
+  
+
   return (
     <LoadScript googleMapsApiKey={API_KEY} libraries={libraries}>
       <div>

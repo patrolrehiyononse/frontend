@@ -39,10 +39,11 @@ const Login: React.FC = () => {
 
   const onSubmit =  (data: FormValues) => {
     // Handle login logic here
-     app.post('/api/login/', { email: data.email, password: data.password }).then((res) => {
-      // console.log("access")
+     app.post('/api/login/', { email: data.email, password: data.password }).then((res: any) => {
+      
       localStorage.setItem("access_token", res.data.access_token)
       localStorage.setItem("refresh_token", res.data.refresh_token)
+      localStorage.setItem("unit", res.data.unit)
       if (res.data.role === "user") {
         history.push('/user')
       } else if (res.data.role === "admin") {

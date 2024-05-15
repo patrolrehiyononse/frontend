@@ -9,6 +9,7 @@ type PersonModalProps = {
   onAddPerson: (person: Person) => void;
   units: any;
   ranks: any;
+  subunit: any;
 };
 
 type Person = {
@@ -17,9 +18,10 @@ type Person = {
   rank: any;
   unit: any;
   email: any;
+  // subunit: any;
 };
 
-const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, units, ranks }) => {
+const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, units, ranks, subunit }) => {
   // const [units, setUnits] = React.useState<any>([]);
   // const [ranks, setRanks] = React.useState<any>([]);
   const [stations, setStations] = React.useState<any>([]);
@@ -73,6 +75,8 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, u
     onClose();
   };
 
+  console.log(subunit)
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -118,7 +122,7 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, u
             )}
           </Select>
         </FormControl>
-        {/* <FormControl fullWidth sx={{ marginBottom: "10px" }}>
+        <FormControl fullWidth sx={{ marginBottom: "10px" }}>
           <InputLabel id="demo-simple-select-label">Sub Unit</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -127,12 +131,12 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, u
             label="Station"
             onChange={(e) => setStation(e.target.value)}
           >
-            {subUnits.map((items: any) => (
-              <MenuItem value={items.sub_unit_code} key={items.id}>{items.station_name} {items.description === null ? " " : `- ${items.description}`}</MenuItem>
+            {subunit.map((items: any) => (
+              <MenuItem value={items.sub_unit_code} key={items.id}>{items.unit.description} - {items.sub_unit_description}</MenuItem>
             )
             )}
           </Select>
-        </FormControl> */}
+        </FormControl>
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Rank</InputLabel>
           <Select

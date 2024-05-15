@@ -83,11 +83,6 @@ const GPSMap: React.FC = () => {
                     const email = localStorage.getItem("email")
                     const data = { latitude, longitude, email };
                     socket.send(JSON.stringify(data)); // Send GPS data to the server
-
-                    if (!notificationShown && !isLocationInsidePolygon(location)) {
-                        // alert('You are outside the polygon!');
-                        setOpenToast(true);
-                    }
                 },
                 (error) => {
                     if (error.code == 1) {
@@ -117,8 +112,10 @@ const GPSMap: React.FC = () => {
 
     useEffect(() => {
         connectWebSocket()
+        let unit = localStorage.getItem("unit")
 
-        app.get(`/api/geofencing/72/`).then((res) => {
+        app.get(`/api/get_geofencing/?unit=${unit}`).then((res: any) => {
+            console.log(res)
             setCoordinates(JSON.parse(res.data.coordinates))
             // setCoordinates(res.data)
             // setCenter(JSON.parse(res.data.center))
@@ -132,47 +129,49 @@ const GPSMap: React.FC = () => {
         };
     }, []);
 
-    // useEffect(() => {
-    //     const options = {
-    //         enableHighAccuracy: true,
-    //         timeout: 5000,
-    //         maximumAge: 0,
-    //     };
+    useEffect(() => {
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+        };
 
-    //     const watchId = navigator.geolocation.watchPosition(
-    //         (position) => {
-    //             const userLocation: Location = {
-    //                 lat: position.coords.latitude,
-    //                 lng: position.coords.longitude,
-    //             };
-    //             setLocation(userLocation);
+        const watchId = navigator.geolocation.watchPosition(
+            (position) => {
+                const userLocation: Location = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+                setLocation(userLocation);
 
-    //             // Check if the user is outside the polygon
-    //             if (!notificationShown && !isLocationInsidePolygon(userLocation)) {
-    //                 // alert('You are outside the polygon!');
-    //                 setOpenToast(true);
-    //             }
-    //         },
-    //         (error) => {
-    //             if (error.code === 1) {
-    //                 console.log("Error: Access is denied!");
-    //             } else if (error.code === 2) {
-    //                 console.log("Error: Position is unavailable!");
-    //             }
-    //         },
-    //         options
-    //     );
+                console.log(isLocationInsidePolygon(userLocation))
 
-    //     const notificationTimer = setInterval(() => {
-    //         setNotificationShown(false);
-    //     }, REFRESH_INTERVAL);
+                // Check if the user is outside the polygon
+                if (!isLocationInsidePolygon(userLocation)) {
+                    // alert('You are outside the polygon!');
+                    setOpenToast(true);
+                }
+            },
+            (error) => {
+                if (error.code === 1) {
+                    console.log("Error: Access is denied!");
+                } else if (error.code === 2) {
+                    console.log("Error: Position is unavailable!");
+                }
+            },
+            options
+        );
+
+        const notificationTimer = setInterval(() => {
+            setNotificationShown(false);
+        }, REFRESH_INTERVAL);
 
 
-    //     return () => {
-    //         navigator.geolocation.clearWatch(watchId);
-    //         clearInterval(notificationTimer); // Clear the notification timer
-    //     };
-    // }, [coordinates, notificationShown]);
+        return () => {
+            navigator.geolocation.clearWatch(watchId);
+            clearInterval(notificationTimer); // Clear the notification timer
+        };
+    }, [coordinates, notificationShown]);
 
     const handleLogOut = () => {
         // 

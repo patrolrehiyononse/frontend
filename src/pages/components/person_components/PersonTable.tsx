@@ -31,8 +31,8 @@ const PersonTable: React.FC<PersonTableProps> = ({ rows, count, pagination }) =>
             <TableCell>Full Name</TableCell>
             <TableCell>Rank / Name</TableCell>
             <TableCell>Unit</TableCell>
-            <TableCell>Sub Unit</TableCell>
-            {/* <TableCell>Station</TableCell> */}
+            {/* <TableCell>Sub Unit</TableCell> */}
+            <TableCell>Station</TableCell>
             <TableCell>Email</TableCell>
           </TableRow>
         </TableHead>

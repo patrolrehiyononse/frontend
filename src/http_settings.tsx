@@ -2,8 +2,8 @@ import axios from "axios";
 import { response } from "express";
 
 const app = axios.create({
-    baseURL: "http://127.0.0.1:8000/",
-    // baseURL: "https://gpsrehiyononse.online/",
+    // baseURL: "http://127.0.0.1:8000/",
+    baseURL: "https://gpsrehiyononse.online/",
     // withCredentials: true,
     headers: {
         "Content-Type": "application/json",
@@ -43,8 +43,8 @@ app.interceptors.response.use(
                 }
 
                 try {
-                    // const response = await axios.post('https://gpsrehiyononse.online/api/token/refresh/', { refresh: refreshToken });
-                    const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', { refresh: refreshToken });
+                    const response = await axios.post('https://gpsrehiyononse.online/api/token/refresh/', { refresh: refreshToken });
+                    // const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', { refresh: refreshToken });
                     const { access: newToken } = response.data;
                     localStorage.setItem('access_token', newToken);
                     isRefreshing = false;

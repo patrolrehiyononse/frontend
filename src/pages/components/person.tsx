@@ -333,6 +333,7 @@ export default function PersonDashboard() {
         onAddPerson={handleAddPerson}
         units={unitList}
         ranks={rankList}
+        subunit={subUnitList}
       />
     </Grid>
   );
