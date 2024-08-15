@@ -18,7 +18,7 @@ type Person = {
   rank: any;
   unit: any;
   email: any;
-  // subunit: any;
+  sub_unit: any;
 };
 
 const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, units, ranks, subunit }) => {
@@ -64,12 +64,14 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, u
       accountNumber: accountNumber,
       full_name: fullName,
       rank: rank,
+      sub_unit: subUnit,
       unit: unit,
       email: email,
     })
     setUnit("")
     setRank("")
     setAccountNumber("")
+    setSubUnit("")
     setEmail("")
     setFullName("")
     onClose();
@@ -127,9 +129,9 @@ const PersonModal: React.FC<PersonModalProps> = ({ open, onClose, onAddPerson, u
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={station}
+            value={subUnit}
             label="Station"
-            onChange={(e) => setStation(e.target.value)}
+            onChange={(e) => setSubUnit(e.target.value)}
           >
             {subunit.map((items: any) => (
               <MenuItem value={items.sub_unit_code} key={items.id}>{items.unit.description} - {items.sub_unit_description}</MenuItem>

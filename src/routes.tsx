@@ -4,6 +4,8 @@ import Dashboard from "./pages/dashboard";
 import PersonDashboard from "./pages/components/person";
 import Login from "./pages/login";
 import GeoFencing from "./pages/geofencing/main";
+import TrackSelect from "./pages/track_person/track_select";
+import DeployedUnits from "./pages/deployed/main";
 
 const routers = () => {
 
@@ -13,6 +15,8 @@ const routers = () => {
                 <Route path="/admin/dashboard" render={() => <Dashboard />} />
                 <Route path='/admin/person' render={() => <PersonDashboard />} />
                 <Route path='/admin/geofence' render={() => <GeoFencing />} />
+                <Route path='/admin/track_person' render={() => <TrackSelect />} />
+                <Route path='/admin/deploy' render={() => <DeployedUnits />} />
                 <Route path='/login' render={() => <Login />} />
             </Switch>
         </Router>

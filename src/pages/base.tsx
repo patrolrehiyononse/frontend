@@ -21,6 +21,8 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import routers from '../routes';
 import LanguageIcon from '@mui/icons-material/Language';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 
 
 
@@ -189,6 +191,23 @@ export default function Dashboard() {
                                     <ListItemText primary="Geofencing" />
                                 </ListItemButton>
                             </Link>
+                            <Link href="/admin/track_person" underline="none">
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <PersonSearchIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Find Person" />
+                                </ListItemButton>
+                            </Link>
+                            <Link href="/admin/deploy" underline="none">
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <RocketLaunchIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Deployed Units" />
+                                </ListItemButton>
+                            </Link>
+                            
                         </>
                     </List>
                 </Drawer>

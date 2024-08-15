@@ -9,7 +9,7 @@ import Title from '../components/Title';
 import axios from 'axios';
 import moment from 'moment';
 import Button from '@mui/material/Button';
-import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocateModal from '../components/transaction_components/locateModal';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -89,6 +89,15 @@ export default function TransactionTable() {
 
   const filteredData = searchBar();
 
+  const shortenText = (text: any, maxLength: any) => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + '...';
+  };
+
+  let sampleText = "Carlos P. Garcia Highway, Purok 38, Ma-a, Langub, Davao City, Davao Region, 8000, Philippines";
+
   return (
     <React.Fragment>
       <Title>Transactions</Title>
@@ -99,7 +108,7 @@ export default function TransactionTable() {
             <TableCell>Rank / Name</TableCell>
             <TableCell>Unit</TableCell>
             <TableCell>Station</TableCell>
-            <TableCell>Coordinates</TableCell>
+            <TableCell>Last Location</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -110,14 +119,18 @@ export default function TransactionTable() {
                 <TableCell>{row.person.full_name} / {row.person.rank?.rank_code}</TableCell>
                 <TableCell>{row.person.unit?.unit_code}</TableCell>
                 <TableCell>{row.person.station?.station_name}</TableCell>
-                <TableCell>{row.lat} / {row.lng}</TableCell>
+                <TableCell>
+                  <Tooltip title={sampleText}>
+                    <span>{shortenText(sampleText, 70)}</span>
+                  </Tooltip>
+                </TableCell>
               </TableRow>
             )
           })}
         </TableBody>
       </Table>
-      <Pagination count={count} color="secondary" sx={{ marginTop: "10px" }} onChange={handleNextPage}/>
-      <LocateModal open={openLocate} onClose={handleOnCloseLocate}/>
+      <Pagination count={count} color="secondary" sx={{ marginTop: "10px" }} onChange={handleNextPage} />
+      <LocateModal open={openLocate} onClose={handleOnCloseLocate} />
       {/* <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
         See more orders
       </Link> */}

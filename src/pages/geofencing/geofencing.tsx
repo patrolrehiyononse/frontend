@@ -33,7 +33,7 @@ function DisplayGeoFence({ coordinates, polycenter }: any) {
         polygonOptions: {
             fillColor: "#2196f3",
             stroke: "#2196f3",
-            fillOpacity: 0.5,
+            fillOpacity: 0.1,
             strokeWeight: 2,
             clickable: true,
             editable: true,
@@ -44,13 +44,14 @@ function DisplayGeoFence({ coordinates, polycenter }: any) {
 
     useEffect(() => {
         if (coordinates.length === undefined) {
-            setPath(JSON.parse(coordinates.coordinates))
+            // setPath(JSON.parse(coordinates.coordinates))
+            setPath(coordinates.coordinates)
             setCenter(polycenter)
             setZoom(12)
         } else {
             let getPath: any = []
             coordinates.map((items: any) => {
-                getPath.push(items.coordinates)
+                getPath.push(JSON.stringify(items.coordinates))
             })
             setZoom(9)
             setPath(getPath)
@@ -115,13 +116,14 @@ function DisplayGeoFence({ coordinates, polycenter }: any) {
                 {
                     typeof path[0] !== "object" ?
                         path.map((items: any, index: any) => {
+                            console.log(items)
                             return (
                                 <Polygon
                                     key={index.length}
                                     options={{
                                         fillColor: "#2196f3",
                                         strokeColor: "#2196f3",
-                                        fillOpacity: 0.5,
+                                        fillOpacity: 0.1,
                                         strokeWeight: 2,
                                     }}
                                     path={JSON.parse(items)}
@@ -134,7 +136,7 @@ function DisplayGeoFence({ coordinates, polycenter }: any) {
                                 options={{
                                     fillColor: "#2196f3",
                                     strokeColor: "#2196f3",
-                                    fillOpacity: 0.5,
+                                    fillOpacity: 0.1,
                                     strokeWeight: 2,
                                 }}
                                 path={path}

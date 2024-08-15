@@ -9,7 +9,7 @@ import Title from './Title';
 import axios from 'axios';
 import moment from 'moment';
 import Button from '@mui/material/Button';
-import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField } from '@mui/material';
+import { FormControl, InputLabel, MenuItem, Pagination, Select, TextField, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import LocateModal from './transaction_components/locateModal';
 // import ExploreIcon from '@mui/icons-material/Explore';
@@ -97,6 +97,15 @@ export default function Transaction() {
     })
   };
 
+  const shortenText = (text: any, maxLength: any) => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + '...';
+  };
+
+  let sampleText = "Carlos P. Garcia Highway, Purok 38, Ma-a, Langub, Davao City, Davao Region, 8000, Philippines";
+
   return (
     <React.Fragment>
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
@@ -139,7 +148,7 @@ export default function Transaction() {
             <TableCell>Rank / Name</TableCell>
             <TableCell>Unit</TableCell>
             <TableCell>Station</TableCell>
-            <TableCell>Coordinates</TableCell>
+            <TableCell>Last Location</TableCell>
             <TableCell align="right">Action</TableCell>
           </TableRow>
         </TableHead>
@@ -151,11 +160,15 @@ export default function Transaction() {
                 <TableCell>{row.person.full_name} / {row.person.rank?.rank_code}</TableCell>
                 <TableCell>{row.person.unit?.unit_code}</TableCell>
                 <TableCell>{row.person.station?.station_name}</TableCell>
-                <TableCell>{row.lat} / {row.lng}</TableCell>
+                <TableCell>
+                  <Tooltip title={sampleText}>
+                    <span>{shortenText(sampleText, 70)}</span>
+                  </Tooltip>
+                </TableCell>
                 <TableCell align='right'>
                   <Button variant="text" onClick={(e) => {
                     setOpenLocate(true)
-                    setLatLng({lat: parseFloat(row.lat), lng: parseFloat(row.lng)})
+                    setLatLng({ lat: parseFloat(row.lat), lng: parseFloat(row.lng) })
                   }}>
                     <ControlPointIcon />
                   </Button>

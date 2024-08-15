@@ -16,6 +16,8 @@ import axios from 'axios';
 import GPSMap from './dashboard/map-v2';
 import app from '../http_settings';
 import GeoFencing from './geofencing/geofencing';
+import TrackSelect from './track_person/track_select';
+import TrackMap from './track_person/track_map';
 
 const Dashboard = () => {
   const [value, setValue] = React.useState('1');
@@ -119,6 +121,7 @@ const Dashboard = () => {
 
               </Paper>
             </TabPanel>
+            
           </TabContext>
         </Box>
       </Grid>

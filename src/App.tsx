@@ -9,7 +9,6 @@ import PersonDashboard from './pages/components/person'
 import Login from './pages/login';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GPSMap from './pages/map-v2';
-import GPSDisplay from './testing';
 
 function App() {
 

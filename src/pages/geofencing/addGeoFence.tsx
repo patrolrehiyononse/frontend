@@ -31,7 +31,7 @@ function AddGeoFence(props: any) {
     const [name, setName] = useState<string>("");
     const [coordinates, setCoordinates] = useState<string>("");
     const [polyCenter, setPolyCenter] = useState<any>();
-    const [unitList, setUnitList] = useState<any>([]);
+    const [subUnitList, setSubUnitList] = useState<any>([]);
     const [unit, setUnit] = useState<any>();
 
     const options: any = {
@@ -46,7 +46,7 @@ function AddGeoFence(props: any) {
             strokeWeight: 2,
             clickable: true,
             editable: true,
-            draggable: true,
+            draggable: false,
             zindex: 1,
         }
     }
@@ -94,9 +94,9 @@ function AddGeoFence(props: any) {
     }
 
     useEffect(() => {
-        app.get("/api/unit_choices/").then((res: any) => {
-            setUnitList(res.data)
-          })
+        app.get("/api/subunit_choices/").then((res: any) => {
+            setSubUnitList(res.data)
+        })
     }, [])
 
 
@@ -123,8 +123,8 @@ function AddGeoFence(props: any) {
                         label="Unit"
                         onChange={(e) => setUnit(e.target.value)}
                     >
-                        {unitList.map((items: any) => (
-                            <MenuItem value={items.description} key={items.id}>{items.description}</MenuItem>
+                        {subUnitList.map((items: any) => (
+                            <MenuItem value={items.sub_unit_description} key={items.id}>{items.sub_unit_description}</MenuItem>
                         )
                         )}
                     </Select>

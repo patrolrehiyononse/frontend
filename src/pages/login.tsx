@@ -44,6 +44,7 @@ const Login: React.FC = () => {
       localStorage.setItem("access_token", res.data.access_token)
       localStorage.setItem("refresh_token", res.data.refresh_token)
       localStorage.setItem("unit", res.data.unit)
+      localStorage.setItem("id", res.data.id)
       if (res.data.role === "user") {
         history.push('/user')
       } else if (res.data.role === "admin") {
@@ -78,7 +79,7 @@ const Login: React.FC = () => {
         >
           <img src={logo} style={{ width: "100px" }} />
 
-          <strong style={{ fontSize: "20px" }}>Patrol Rehiyon Onse GPS Web Application</strong>
+          <strong style={{ fontSize: "20px" }}>TORRE: Tracking of Operations and Real-time Reporting and Evalulation of PRO 11 Personnel</strong>
           <br />
           <br />
           <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>

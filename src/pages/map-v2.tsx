@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { GoogleMap, Marker, LoadScript, Polygon } from '@react-google-maps/api';
+import { GoogleMap, Marker, LoadScript, Polygon, Polyline } from '@react-google-maps/api';
 import { styled } from '@mui/material/styles';
 import { MarkerF, InfoWindowF } from '@react-google-maps/api'
 import { Button, IconButton, Snackbar } from '@mui/material';
@@ -8,6 +8,7 @@ import app from '../http_settings';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UploadFiles from './upload/upload';
 import CloseIcon from '@mui/icons-material/Close';
+import { access } from 'fs';
 
 const API_KEY: string = process.env.REACT_APP_GOOGLE_API_KEY!;
 const REFRESH_INTERVAL = 3000;
@@ -15,11 +16,6 @@ const REFRESH_INTERVAL = 3000;
 const containerStyle = {
     width: '100%',
     height: '400px',
-};
-
-const center = {
-    lat: 0,
-    lng: 0,
 };
 
 interface Location {
@@ -42,10 +38,16 @@ const VisuallyHiddenInput = styled('input')({
 const GPSMap: React.FC = () => {
     const [location, setLocation] = useState({ lat: 0, lng: 0 });
     const [clickMarker, setClickMarker] = useState(false);
+    const [clickMarker2, setClickMarker2] = useState(false);
     const [showUploadModal, setShowUploadModal] = useState(false);
     const [coordinates, setCoordinates] = useState<any>([]);
     const [openToast, setOpenToast] = useState<boolean>(false);
     const [notificationShown, setNotificationShown] = useState<boolean>(false);
+    const [path, setPath] = useState<any>([]);
+    const [destination, setDestination] = useState({ lat: 0, lng: 0 });
+    const [route, setRoute] = useState<any>([]);
+    const [address, setAddress] = useState<any>();
+    const [id, setId] = useState<any>();
 
     let socket: WebSocket;
 
@@ -59,9 +61,19 @@ const GPSMap: React.FC = () => {
         return google.maps.geometry.poly.containsLocation(userLocation, googlePolygon);
     };
 
+    const displayRoute = (marker1: any, marker2: any) => {
+        const url_route = `https://router.project-osrm.org/route/v1/driving/${marker1};${marker2}?overview=full&geometries=geojson&continue_straight=true`
+        axios.get(url_route).then((res: any) => {
+            const coordinates = res.data.routes[0].geometry.coordinates
+            const formattedCoordinates = coordinates.map(([lng, lat]: any) => ({ lat, lng }));
+            setRoute(formattedCoordinates)
+        });
+    }
+
     const connectWebSocket = () => {
-        const socketUrl = 'ws://127.0.0.1:8000/ws/some_path/';
-        // const socketUrl = 'wss://gpsrehiyononse.online/ws/some_path/';
+        let access_token = localStorage.getItem("access_token")
+        const socketUrl = `ws://127.0.0.1:8000/ws/some_path/?token=${access_token}`;
+        // const socketUrl = `wss://gpsrehiyononse.online/ws/some_path/?token=${access_token}`;
 
         socket = new WebSocket(socketUrl);
 
@@ -80,6 +92,7 @@ const GPSMap: React.FC = () => {
                         lng: position.coords.longitude,
                     });
                     const { latitude, longitude } = position.coords;
+                    const newPath = { lat: latitude, lng: longitude };
                     const email = localStorage.getItem("email")
                     const data = { latitude, longitude, email };
                     socket.send(JSON.stringify(data)); // Send GPS data to the server
@@ -98,7 +111,6 @@ const GPSMap: React.FC = () => {
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log(data)
-            //   setGPSData(data);
         };
 
         socket.onclose = (event) => {
@@ -108,26 +120,42 @@ const GPSMap: React.FC = () => {
         };
     }
 
-    // http://127.0.0.1:8000/api/geofencing/72/
-
     useEffect(() => {
         connectWebSocket()
         let unit = localStorage.getItem("unit")
-
         app.get(`/api/get_geofencing/?unit=${unit}`).then((res: any) => {
-            console.log(res)
-            setCoordinates(JSON.parse(res.data.coordinates))
-            // setCoordinates(res.data)
-            // setCenter(JSON.parse(res.data.center))
+            setCoordinates(res.data.coordinates)
+            setOpenToast(false)
         })
-
         return () => {
-            //     clearInterval(gpsDataInterval);
             if (socket) {
                 socket.close();
             }
         };
     }, []);
+
+    useEffect(() => {
+        let id = localStorage.getItem("id")
+        console.log(id, "user_id")
+        app.get(`/api/deployed_units/by-person/?person_id=${id}`).then((res: any) => {
+            if (res.data.length !== 0) {
+                setDestination(JSON.parse(res.data[0].coordinates))
+                setAddress(res.data[0].destination)
+                setId(res.data[0].id)
+            } else {
+                setAddress("Not Assigned")
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        if (location.lat !== 0 && location.lng !== 0 && destination.lng !== 0 && destination.lat) {
+            let markerOne = `${location.lng},${location.lat}`;
+            let markerTwo = `${destination.lng},${destination.lat}`;
+            displayRoute(markerOne, markerTwo);
+        }
+        console.log(location)
+    }, [location])
 
     useEffect(() => {
         const options = {
@@ -144,13 +172,12 @@ const GPSMap: React.FC = () => {
                 };
                 setLocation(userLocation);
 
-                console.log(isLocationInsidePolygon(userLocation))
-
-                // Check if the user is outside the polygon
+                // // Check if the user is outside the polygon
                 if (!isLocationInsidePolygon(userLocation)) {
                     // alert('You are outside the polygon!');
                     setOpenToast(true);
                 }
+                // console.log(isLocationInsidePolygon(userLocation))
             },
             (error) => {
                 if (error.code === 1) {
@@ -189,6 +216,17 @@ const GPSMap: React.FC = () => {
         setOpenToast(false);
     };
 
+    const handlePathLine = () => {
+        // console.log(id)
+        let userId = localStorage.getItem("id");
+        app.patch(`/api/deployed_units/${id}/update-arrival-status/`, {
+            "person_id": userId,
+            "is_arrived": true
+        }).then((res) => {
+            console.log(res)
+        })
+    }
+
     const action = (
         <React.Fragment>
             <IconButton
@@ -202,25 +240,24 @@ const GPSMap: React.FC = () => {
         </React.Fragment>
     );
 
+    // console.log(destination)
+
     return (
-        <LoadScript googleMapsApiKey={API_KEY}>
-            <div style={{ height: '100vh', width: '100%' }}>
-                <GoogleMap
-                    mapContainerStyle={containerStyle}
-                    center={location}
-                    zoom={15}
-                >
+        <div style={{ height: '100vh', width: '100%', display: 'flex', flexDirection: 'column' }}>
+            <LoadScript googleMapsApiKey={API_KEY}>
+                <GoogleMap mapContainerStyle={containerStyle} center={location} zoom={13}>
                     <Polygon
                         options={{
-                            fillColor: "#2196f3",
-                            strokeColor: "#2196f3",
-                            fillOpacity: 0.5,
+                            fillColor: '#2196f3',
+                            strokeColor: '#2196f3',
+                            fillOpacity: 0.1,
                             strokeWeight: 2,
                         }}
                         path={coordinates}
                     />
-                    <MarkerF position={location}
-                        icon={"http://maps.google.com/mapfiles/ms/icons/purple-dot.png"}
+                    <MarkerF
+                        position={location}
+                        icon="http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
                         onClick={() => setClickMarker(true)}
                     >
                         {clickMarker && (
@@ -234,13 +271,33 @@ const GPSMap: React.FC = () => {
                             </InfoWindowF>
                         )}
                     </MarkerF>
+                    <MarkerF
+                        position={destination}
+                        icon="http://maps.google.com/mapfiles/ms/icons/purple-dot.png"
+                        onClick={() => setClickMarker2(true)}
+                    >
+                        {/* {clickMarker2 && (
+                            <InfoWindowF onCloseClick={() => setClickMarker2(false)} position={destination}>
+                            <div>
+                                <p>Your destination</p>
+                                <span>{address}</span>
+                            </div>
+                            </InfoWindowF>
+                        )} */}
+                    </MarkerF>
+                    <Polyline
+                        path={route}
+                        options={{ strokeColor: '#3d37f0', strokeOpacity: 0.7, strokeWeight: 10 }}
+                    />
                 </GoogleMap>
-                <Button href='/' onClick={handleLogOut}>
-                    logout
+            </LoadScript>
+            <div style={{ padding: '20px', backgroundColor: '#f5f5f5', flex: '1 0 auto' }}>
+                <p>Destination: <strong>{address}</strong></p>
+                <Button href="/" onClick={handleLogOut} variant="outlined" style={{ marginRight: '10px' }}>
+                    Logout
                 </Button>
-                <br />
-                <Button variant='contained' startIcon={<CloudUploadIcon />} onClick={() => setShowUploadModal(true)}>
-                    upload file
+                <Button onClick={handlePathLine} variant="outlined">
+                    Arrived
                 </Button>
             </div>
             <Snackbar
@@ -249,10 +306,13 @@ const GPSMap: React.FC = () => {
                 autoHideDuration={6000}
                 onClose={handleClose}
                 message="You are outside the polygon!"
-                action={action}
+                action={
+                    <Button color="secondary" size="small" onClick={handleClose}>
+                        CLOSE
+                    </Button>
+                }
             />
-            <UploadFiles open={showUploadModal} onClose={() => setShowUploadModal(false)} />
-        </LoadScript>
+        </div>
 
     );
 };

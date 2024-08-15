@@ -101,6 +101,7 @@ export default function PersonDashboard() {
       acccount_number: person.accountNumber,
       full_name: person.full_name,
       rank: person.rank,
+      sub_unit: person.sub_unit,
       unit: person.unit,
       email: person.email
     }).then((res: any) => {
