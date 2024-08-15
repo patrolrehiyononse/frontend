@@ -114,7 +114,7 @@ const TrackSelect: React.FC = () => {
               </MenuItem>
               {getAvailableOptions(select).map((option: any) => (
                 <MenuItem key={option.id} value={option.full_name}>
-                  {option.full_name}
+                  {option.rank.rank_code} - {option.full_name}
                 </MenuItem>
               ))}
             </Select>

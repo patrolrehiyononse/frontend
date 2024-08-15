@@ -41,6 +41,7 @@ export default function PersonDashboard() {
   const [unitList, setUnitList] = React.useState<any>([]);
   const [rankList, setRankList] = React.useState<any>([]);
   const [subUnitList, setSubUnitList] = React.useState<any>([]);
+  const [stationList, setStationList] = React.useState<any>([]);
 
   const fetchPersonData = (page: any) => {
     app.get(`/api/person/?page=${page}`).then((res: any) => {
@@ -103,7 +104,8 @@ export default function PersonDashboard() {
       rank: person.rank,
       sub_unit: person.sub_unit,
       unit: person.unit,
-      email: person.email
+      email: person.email,
+      station: person.station
     }).then((res: any) => {
       fetchPersonData(1)
     })
@@ -178,6 +180,7 @@ export default function PersonDashboard() {
     }
     const getStation = async () => {
       app.get(`/api/station/`).then((res: any) => {
+        console.log(res.data.results)
         setStationData(res.data.results)
         setStationCount(Math.ceil(res.data.count / res.data.results.length))
       })
@@ -220,6 +223,18 @@ export default function PersonDashboard() {
       }
     }).then((res: any) => {
       setSubUnitList(res.data)
+    })
+  }, [])
+
+  useEffect(() => {
+    const access_token = localStorage.getItem("access_token");
+    app.get("/api/station_choices/", {
+      headers: {
+        Authorization: `Bearer ${access_token}`
+      }
+    }).then((res: any) => {
+      console.log(res)
+      setStationList(res.data)
     })
   }, [])
 
@@ -335,6 +350,7 @@ export default function PersonDashboard() {
         units={unitList}
         ranks={rankList}
         subunit={subUnitList}
+        stationData={stationList}
       />
     </Grid>
   );
