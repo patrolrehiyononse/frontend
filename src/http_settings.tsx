@@ -2,8 +2,8 @@ import axios from "axios";
 import { response } from "express";
 
 const app = axios.create({
-    baseURL: "http://localhost:8000/",
-    // baseURL: "https://gpsrehiyononse.online/",
+    // baseURL: "http://localhost:8000/",
+    baseURL: "https://gpsrehiyononse.online/",
     // withCredentials: true,
     headers: {
         "Content-Type": "application/json",
@@ -14,7 +14,6 @@ const app = axios.create({
 app.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('access_token');
-        console.log(token)
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
             // config.withCredentials = true;
@@ -33,28 +32,29 @@ let refreshSubscribers = [];
 app.interceptors.response.use(
     (response) => response,
     async (error) => {
-        const { config, response: { status } } = error;
-        if (status === 401 && !config._retry) {
+        const originalRequest = error.config;
+        const status = error.response ? error.response.status : null;
+
+        if (status === 401 && !originalRequest._retry) {
             if (!isRefreshing) {
                 isRefreshing = true;
                 const refreshToken = localStorage.getItem('refresh_token');
                 if (!refreshToken) {
-                    window.location.href = '/login';
-                    return Promise.reject(error);
+                    // window.location.href = '/login';
+                    return Promise.reject({ ...error, status });
                 }
 
                 try {
-                    // const response = await axios.post('https://gpsrehiyononse.online/api/token/refresh/', { refresh: refreshToken });
-                    const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', { refresh: refreshToken });
+                    const response = await axios.post('https://gpsrehiyononse.online/api/token/refresh/', { refresh: refreshToken });
+                    // const response = await axios.post('http://127.0.0.1:8000/api/token/refresh/', { refresh: refreshToken });
                     const { access: newToken } = response.data;
                     localStorage.setItem('access_token', newToken);
                     isRefreshing = false;
 
-                    // Update the original request headers with the new token
-                    config.headers.Authorization = `Bearer ${newToken}`;
+                    originalRequest._retry = true;
+                    originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
-                    // Execute the original request with the new token
-                    return app(config);
+                    return app(originalRequest);
                 } catch (refreshError) {
                     window.location.href = '/login';
                     return Promise.reject(refreshError);
@@ -64,15 +64,17 @@ app.interceptors.response.use(
             } else {
                 return new Promise((resolve) => {
                     refreshSubscribers.push((token: any) => {
-                        config.headers.Authorization = `Bearer ${token}`;
-                        resolve(app(config));
+                        originalRequest.headers.Authorization = `Bearer ${token}`;
+                        resolve(app(originalRequest));
                     });
                 });
             }
         }
 
-        return Promise.reject(error);
+        // Pass the error status to the component
+        return Promise.reject({ ...error, status });
     }
 );
+
 
 export default app;

@@ -32,20 +32,19 @@ const PersonTable: React.FC<PersonTableProps> = ({ rows, count, pagination }) =>
             <TableCell>Rank / Name</TableCell>
             <TableCell>Unit</TableCell>
             <TableCell>Sub Unit</TableCell>
-            {/* <TableCell>Station</TableCell> */}
+            <TableCell>Station</TableCell>
             <TableCell>Email</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row: any) => {
-            console.log(rows)
             return (
               <TableRow key={row.id}>
                 <TableCell>{row.full_name}</TableCell>
                 <TableCell>{row.rank.rank_code}</TableCell>
                 <TableCell>{row.unit.unit_code} - {row.unit.description}</TableCell>
                 <TableCell>{row.sub_unit.sub_unit_code} - {row.sub_unit.sub_unit_description}</TableCell>
-                {/* <TableCell>{row.station.station_name} {row.station.description === null ? "" : `(${row.station.description})`}</TableCell> */}
+                <TableCell>{row.station.station_name} {row.station.description === null ? "" : `(${row.station.description})`}</TableCell>
                 <TableCell>{row.email}</TableCell>
               </TableRow>
             )

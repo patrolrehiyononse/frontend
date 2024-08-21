@@ -16,6 +16,7 @@ import img from '../assets/viber_image_2023-09-11_18-36-47-771.jpg';
 import logo from '../assets/viber_image_2023-09-11_18-36-46-801.png';
 import app from '../http_settings';
 import CodeInputDialog from './components/login_components/email_verification';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 type FormValues = {
@@ -28,19 +29,21 @@ const Login: React.FC = () => {
   // const [password, setPassword] = useState('');
   const history = useHistory();
   const [showCodeDialog, setShowCodeDialog] = useState<boolean>(false);
-  const [text, setText] = useState();
+  const [text, setText] = useState<string>();
+  const [spin, setSpin] = useState<boolean>();
 
 
   const form = useForm<FormValues>();
 
-  const { register, handleSubmit, formState } = form;
+  const { register, handleSubmit, formState, reset } = form;
 
   const { errors } = formState;
 
-  const onSubmit =  (data: FormValues) => {
+  const onSubmit = (data: FormValues) => {
+    setSpin(true)
     // Handle login logic here
-     app.post('/api/login/', { email: data.email, password: data.password }).then((res: any) => {
-      
+    app.post('/api/login/', { email: data.email, password: data.password }).then((res: any) => {
+      setSpin(false)
       localStorage.setItem("access_token", res.data.access_token)
       localStorage.setItem("refresh_token", res.data.refresh_token)
       localStorage.setItem("unit", res.data.unit)
@@ -51,6 +54,17 @@ const Login: React.FC = () => {
         history.push('/admin/dashboard')
         // setShowCodeDialog(true)
       }
+    }).catch((e: any) => {
+      setSpin(false)
+      let errorCode = e.status;
+      if (errorCode === 401) {
+        setText("Unauthorized: Incorrect email or password.");
+      } else if (errorCode === 500) {
+        setText("Internal Server Error: Please try again later.");
+      } else {
+        setText("An unexpected error occurred. Please try again.");
+      }
+      reset({ password: '' });
     })
     localStorage.setItem("email", data.email);
   };
@@ -110,19 +124,24 @@ const Login: React.FC = () => {
                   helperText={errors.password?.message}
                 />
               </Grid>
+              {
+                text ?
+                  <Grid>
+                    <span style={{ color: "red", marginLeft: "18px" }}>
+                      {text}
+                    </span>
+                  </Grid>
+                  : null
+              }
               <Grid item xs={12}>
                 <Button
                   type="submit"
                   fullWidth
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                 >
-                  Login
+                  Login {spin ? <CircularProgress size={20} sx={{ ml: 1 }} /> : null}
                 </Button>
-
-                {
-                  text ? text : null
-                }
               </Grid>
             </Grid>
           </form>

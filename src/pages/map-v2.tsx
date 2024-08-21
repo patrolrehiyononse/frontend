@@ -53,12 +53,13 @@ const GPSMap: React.FC = () => {
 
     const isLocationInsidePolygon = (userLocation: Location): boolean => {
         if (!window.google?.maps) return false;
-
-        const googlePolygon = new window.google.maps.Polygon({
-            paths: coordinates,
-        });
-
-        return google.maps.geometry.poly.containsLocation(userLocation, googlePolygon);
+        if (coordinates.length !== 0) {
+            const googlePolygon = new window.google.maps.Polygon({
+                paths: coordinates,
+            });
+            return google.maps.geometry.poly.containsLocation(userLocation, googlePolygon);
+        }
+        return false;
     };
 
     const displayRoute = (marker1: any, marker2: any) => {
@@ -72,8 +73,8 @@ const GPSMap: React.FC = () => {
 
     const connectWebSocket = () => {
         let access_token = localStorage.getItem("access_token")
-        const socketUrl = `ws://127.0.0.1:8000/ws/some_path/?token=${access_token}`;
-        // const socketUrl = `wss://gpsrehiyononse.online/ws/some_path/?token=${access_token}`;
+        // const socketUrl = `ws://127.0.0.1:8000/ws/some_path/?token=${access_token}`;
+        const socketUrl = `wss://gpsrehiyononse.online/ws/some_path/?token=${access_token}`;
 
         socket = new WebSocket(socketUrl);
 
